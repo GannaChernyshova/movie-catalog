@@ -11,21 +11,11 @@ FROM node:22-slim AS base
 WORKDIR /usr/local/app
 RUN useradd -m appuser && chown -R appuser /usr/local/app
 USER appuser
-COPY --chown=appuser:appuser package.json package-lock.json ./
+COPY --chown=appuser:appuser package.json package-lock.json tsconfig.json ./
+COPY --chown=appuser:appuser ./src ./src
 
-
-###########################################################
-# Stage: dev
-#
-# This stage is used to run the application in a development
-# environment. It installs all app dependencies and will
-# start the app in a mode that will watch for file changes
-# and automatically restart the app.
-###########################################################
-FROM base AS dev
-ENV NODE_ENV=development
-RUN npm install
-CMD ["yarn", "dev-container"]
+RUN npm ci
+RUN npm run build
 
 
 ###########################################################
@@ -37,8 +27,11 @@ CMD ["yarn", "dev-container"]
 FROM base AS final
 ENV NODE_ENV=production
 RUN npm ci --production --ignore-scripts && npm cache clean --force
-COPY ./src ./src
+# Copy only compiled JS and necessary files
+COPY --chown=appuser:appuser --from=base /usr/local/app/dist ./dist
+COPY --chown=appuser:appuser --from=base /usr/local/app/node_modules ./node_modules
+COPY --chown=appuser:appuser --from=base /usr/local/app/package.json ./package.json
 
 EXPOSE 3000
 
-CMD [ "node", "src/index.js" ]
+CMD [ "node", "dist/app.js" ]

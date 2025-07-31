@@ -1,4 +1,4 @@
-import { PostgreSqlContainer } from "@testcontainers/postgresql";
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 import { getMovies, addMovie, searchMovies } from "../src/services/MovieService";
 import * as movieService from "../src/services/MovieService";
 import path from 'path';
@@ -8,8 +8,7 @@ async function createAndBootstrapPostgresContainer() {
     .withCopyFilesToContainer([
       {
         source: path.join(__dirname, "../dev/db/1-create-schema.sql"),
-        target: "/docker-entrypoint-initdb.d/1-create-schema.sql",
-        readOnly: true,
+        target: "/docker-entrypoint-initdb.d/1-create-schema.sql"
       },
     ])
     .start();
@@ -25,7 +24,7 @@ async function createAndBootstrapPostgresContainer() {
 }
 
 describe("MovieService integration", () => {
-  let postgresContainer: PostgreSqlContainer;
+  let postgresContainer: StartedPostgreSqlContainer;
   let movieService: any;
 
   beforeAll(async () => {

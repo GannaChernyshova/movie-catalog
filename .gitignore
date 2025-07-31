@@ -24,7 +24,6 @@ build/
 # Ignore environment-specific files
 .env.local
 .env.*.local
-.env
 
 # Ignore editor-specific files
 .idea/

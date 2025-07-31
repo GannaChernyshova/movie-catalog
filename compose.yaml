@@ -26,3 +26,18 @@ services:
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
     depends_on:
       - postgres
+
+  app:
+    build:
+      context: .
+      target: final
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: catalog

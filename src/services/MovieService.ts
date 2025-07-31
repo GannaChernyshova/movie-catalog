@@ -33,15 +33,15 @@ async function getMovies() : Promise<Movie[]> {
 
   return result.rows.map(row => ({
     id: row.id,
-    title: row.title,
-    director: row.director,
+    title: row.title!,
+    director: row.director!,
     genres: row.genres,
     releaseYear: row.release_year,
     description: row.description,
   }));
 }
 
-async function addMovie(movie: Movie): Promise<Movie> {
+async function addMovie(movie: Omit<Movie, "id">): Promise<Movie> {
   const client = await getClient();
 
   const existingMovie = await client.query(
@@ -77,8 +77,8 @@ async function searchMovies(query: string): Promise<Movie[]> {
   
     return result.rows.map(row => ({
         id: row.id,
-        title: row.title,
-        director: row.director,
+        title: row.title!,
+        director: row.director!,
         genres: row.genres,
         releaseYear: row.release_year,
         description: row.description,
