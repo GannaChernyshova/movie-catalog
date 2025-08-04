@@ -1,11 +1,11 @@
-import { PostgreSqlContainer, StartedPostgreSqlContainer } from "@testcontainers/postgresql";
-import { GenericContainer, Network, StartedTestContainer, Wait } from "testcontainers";
-import path from 'path';
-import axios from "axios";
+const { PostgreSqlContainer } = require("@testcontainers/postgresql");
+const { GenericContainer, Network, Wait } = require("testcontainers");
+const path = require('path');
+const axios = require("axios");
 
 describe("API E2E test", () => {
-    let db: StartedPostgreSqlContainer;
-    let app: StartedTestContainer;
+    let db;
+    let app;
   
     beforeAll(async () => {
       const network = await new Network().start();
@@ -27,7 +27,7 @@ describe("API E2E test", () => {
       // 2. Start API container with environment variables for DB connection
       const container = await GenericContainer
         .fromDockerfile("../movie-catalog")
-        .withTarget("final")
+        .withTarget("dev")
         .withBuildkit()
         .build();
         
@@ -41,7 +41,7 @@ describe("API E2E test", () => {
             PGUSER: "postgres",
             PGPASSWORD: "postgres",
           })
-        .withWaitStrategy(Wait.forListeningPorts()) // waits for health check
+        .withWaitStrategy(Wait.forListeningPorts())
         .start();
 
         const stream = await app.logs();
@@ -57,10 +57,6 @@ describe("API E2E test", () => {
       await db.stop();
     });
 
-    function sleep(ms: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-  
     it("should create and retrieve a movie", async () => {
       const baseUrl = `http://${app.getHost()}:${app.getMappedPort(3000)}`;
       const payload = {
@@ -74,11 +70,8 @@ describe("API E2E test", () => {
       console.log("POST", `${baseUrl}/movies`);
       console.log("Payload:", JSON.stringify(payload, null, 2));
 
-    //   await sleep(120000); 
-
-
       const response = await axios.post(`${baseUrl}/movies`, payload);
       expect(response.status).toBe(201);
       expect(response.data.title).toBe("Interstellar");
     }, 120000);
-  });
+  }); 

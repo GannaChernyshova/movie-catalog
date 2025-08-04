@@ -1,15 +1,6 @@
-import { Client } from "pg";
+const { Client } = require("pg");
 
-export interface Movie {
-  id: string;
-  title: string;
-  director: string;
-  genres: string[];
-  releaseYear: number;
-  description?: string;
-}
-
-let client: Client | null = null;
+let client = null;
 
 async function getClient() {
   if (!client) {
@@ -26,22 +17,22 @@ async function teardown() {
   }
 }
 
-async function getMovies() : Promise<Movie[]> {
+async function getMovies() {
   const client = await getClient();
 
   const result = await client.query("SELECT * FROM movies ORDER BY title ASC");
 
   return result.rows.map(row => ({
     id: row.id,
-    title: row.title!,
-    director: row.director!,
+    title: row.title,
+    director: row.director,
     genres: row.genres,
     releaseYear: row.release_year,
     description: row.description,
   }));
 }
 
-async function addMovie(movie: Omit<Movie, "id">): Promise<Movie> {
+async function addMovie(movie) {
   const client = await getClient();
 
   const existingMovie = await client.query(
@@ -64,8 +55,7 @@ async function addMovie(movie: Omit<Movie, "id">): Promise<Movie> {
   };
 }
 
-
-async function searchMovies(query: string): Promise<Movie[]> {
+async function searchMovies(query) {
     const client = await getClient();
   
     const result = await client.query(
@@ -77,12 +67,12 @@ async function searchMovies(query: string): Promise<Movie[]> {
   
     return result.rows.map(row => ({
         id: row.id,
-        title: row.title!,
-        director: row.director!,
+        title: row.title,
+        director: row.director,
         genres: row.genres,
         releaseYear: row.release_year,
         description: row.description,
       }));
   }
 
-export { getMovies, addMovie, searchMovies, getClient, teardown };
+module.exports = { getMovies, addMovie, searchMovies, getClient, teardown }; 

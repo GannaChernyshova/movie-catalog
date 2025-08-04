@@ -1,7 +1,5 @@
-import { PostgreSqlContainer, StartedPostgreSqlContainer } from "@testcontainers/postgresql";
-import { getMovies, addMovie, searchMovies } from "../src/services/MovieService";
-import * as movieService from "../src/services/MovieService";
-import path from 'path';
+const { PostgreSqlContainer } = require("@testcontainers/postgresql");
+const path = require('path');
 
 async function createAndBootstrapPostgresContainer() {
   const postgresContainer = await new PostgreSqlContainer("postgres:17.4")
@@ -24,8 +22,8 @@ async function createAndBootstrapPostgresContainer() {
 }
 
 describe("MovieService integration", () => {
-  let postgresContainer: StartedPostgreSqlContainer;
-  let movieService: any;
+  let postgresContainer;
+  let movieService;
 
   beforeAll(async () => {
     postgresContainer = await createAndBootstrapPostgresContainer();
@@ -50,11 +48,11 @@ describe("MovieService integration", () => {
       releaseYear: 2010,
       description: "A mind‑bending thriller."
     };
-    const movie = await addMovie(sample);
+    const movie = await movieService.addMovie(sample);
     expect(movie).toHaveProperty("id");
     expect(movie.title).toBe(sample.title);
 
-    const all = await getMovies();
+    const all = await movieService.getMovies();
     expect(all).toHaveLength(1);
     expect(all[0]).toMatchObject(sample);
   });
@@ -96,4 +94,4 @@ describe("MovieService integration", () => {
     );
   });
 
-});
+}); 

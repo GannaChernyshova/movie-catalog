@@ -1,8 +1,7 @@
-import express from 'express';
-import {addMovie, getMovies, searchMovies} from './services/MovieService';
-import dotenv from 'dotenv';
+const express = require('express');
+const {addMovie, getMovies, searchMovies} = require('./services/MovieService');
+const dotenv = require('dotenv');
 dotenv.config();
-
 
 const app = express();
 app.use(express.json());
@@ -15,7 +14,7 @@ app.post('/movies', async (req, res) => {
     try {
         const movie = await addMovie(req.body);
         res.status(201).json(movie);
-      } catch (err: any) {
+      } catch (err) {
         res.status(500).json({ error: err.message });
       }
 });
@@ -34,7 +33,7 @@ app.get('/movies/search', async (req, res) => {
     try {
       const movies = await searchMovies(q);
       res.json(movies);
-    } catch (err: any) {
+    } catch (err) {
       res.status(500).json({ error: err.message });
     }
   });
@@ -43,4 +42,4 @@ app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });
 
-export default app;
+module.exports = app; 
