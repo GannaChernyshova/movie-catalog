@@ -95,7 +95,7 @@ npm test -- --coverage
 ## Running the app
 
 ### Option A: Docker Compose (recommended)
-Requires Docker (or Colima) running.
+Requires Docker Desktop running.
 
 ```bash
 docker compose up --build
