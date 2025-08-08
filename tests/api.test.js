@@ -44,12 +44,12 @@ describe("API E2E test", () => {
         .withWaitStrategy(Wait.forListeningPorts())
         .start();
 
-        const stream = await app.logs();
-        stream
-          .on("data", (line) => console.log("APP LOG:", line.toString()))
-          .on("err", (line) => console.error("APP ERR:", line.toString()));
+        // const stream = await app.logs();
+        // stream
+        //   .on("data", (line) => console.log("APP LOG:", line.toString()))
+        //   .on("err", (line) => console.error("APP ERR:", line.toString()));
 
-        console.log("APP:", app.getHost());
+        // console.log("APP:", app.getHost());
     }, 120000);
   
     afterAll(async () => {
